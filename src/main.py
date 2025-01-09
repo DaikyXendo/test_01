@@ -1,29 +1,27 @@
 import flet as ft
-import sympy as sp
-
-x = sp.Symbol("x")
+import threading
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 
 def main(page: ft.Page):
-    counter = ft.Text("0", size=50)
+    def run_server(host: str = "localhost", port: int = 2012):
+        server = HTTPServer((host, port), SimpleHTTPRequestHandler)
+        print(f"Server started at http://{host}:{port}")
+        server.serve_forever()
 
-    def increment_click(e):
-        counter.value = str(eval("sp.diff(sin(x), x)"))
-        counter.update()
+    def render_latex():
+        wv.run_javascript('renderLatex("Hello, World!")')
+        wv.update()
 
-    page.floating_action_button = ft.FloatingActionButton(
-        icon=ft.Icons.ADD, on_click=increment_click
+    server_thread = threading.Thread(target=run_server, daemon=True)
+    server_thread.start()
+
+    wv = ft.WebView(
+        url="http://localhost:2012/",
+        expand=True,
     )
-    page.add(
-        ft.SafeArea(
-            ft.Container(
-                counter,
-                alignment=ft.alignment.center,
-            ),
-            expand=True,
-        )
-    )
+    page.add(wv)
+    wv.on_page_ended = lambda _: render_latex()
 
 
 ft.app(main)
-
