@@ -1,27 +1,28 @@
+import matplotlib
+import matplotlib.pyplot as plt
+
 import flet as ft
-import threading
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from flet.matplotlib_chart import MatplotlibChart
+
+matplotlib.use("svg")
 
 
 def main(page: ft.Page):
-    def run_server(host: str = "localhost", port: int = 2012):
-        server = HTTPServer((host, port), SimpleHTTPRequestHandler)
-        print(f"Server started at http://{host}:{port}")
-        server.serve_forever()
 
-    def render_latex():
-        wv.run_javascript('renderLatex("Hello, World!")')
-        wv.update()
+    fig, ax = plt.subplots()
 
-    server_thread = threading.Thread(target=run_server, daemon=True)
-    server_thread.start()
+    fruits = ["apple", "blueberry", "cherry", "orange"]
+    counts = [40, 100, 30, 55]
+    bar_labels = ["red", "blue", "_red", "orange"]
+    bar_colors = ["tab:red", "tab:blue", "tab:red", "tab:orange"]
 
-    wv = ft.WebView(
-        url="http://localhost:2012/",
-        expand=True,
-    )
-    page.add(wv)
-    wv.on_page_ended = lambda _: render_latex()
+    ax.bar(fruits, counts, label=bar_labels, color=bar_colors)
+
+    ax.set_ylabel("fruit supply")
+    ax.set_title("Fruit supply by kind and color")
+    ax.legend(title="Fruit color")
+
+    page.add(MatplotlibChart(fig, expand=True))
 
 
 ft.app(main)

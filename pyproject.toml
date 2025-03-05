@@ -4,9 +4,7 @@ version = "0.1.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = [
-  "flet==0.25.2"
-]
+dependencies = ["flet==0.25.2", "sympy==1.13.3"]
 
 
 [tool.flet]
@@ -26,3 +24,4 @@ copyright = "Copyright (C) 2024 by Flet"
 
 [tool.flet.app]
 path = "src"
+
